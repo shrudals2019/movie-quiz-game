@@ -1,3 +1,4 @@
+```python
 class Quiz:
     def __init__(self, question, choices, answer):
         self.question = question
@@ -59,26 +60,92 @@ class QuizGame:
         print("5. 종료")
         print("========================================")
 
+    def get_number_input(self, message, min_value, max_value):
+        while True:
+            try:
+                value = input(message).strip()
+
+                if value == "":
+                    print("빈 입력은 사용할 수 없습니다.")
+                    continue
+
+                number = int(value)
+
+                if number < min_value or number > max_value:
+                    print(f"{min_value}~{max_value} 사이의 숫자를 입력하세요.")
+                    continue
+
+                return number
+
+            except ValueError:
+                print("숫자를 입력하세요.")
+
+    def play_quiz(self):
+        if not self.quizzes:
+            print("등록된 퀴즈가 없습니다.")
+            return
+
+        score = 0
+
+        print(f"\n퀴즈를 시작합니다! 총 {len(self.quizzes)}문제")
+
+        for index, quiz in enumerate(self.quizzes, start=1):
+            print("\n----------------------------------------")
+            print(f"[문제 {index}]")
+            quiz.display()
+
+            answer = self.get_number_input("정답 입력 (1-4): ", 1, 4)
+
+            if quiz.check_answer(answer):
+                print("정답입니다!")
+                score += 1
+            else:
+                print(f"오답입니다. 정답은 {quiz.answer}번입니다.")
+
+        percentage = int(score / len(self.quizzes) * 100)
+
+        print("\n========================================")
+        print(f"결과: {len(self.quizzes)}문제 중 {score}문제 정답! ({percentage}점)")
+        print("========================================")
+
+        if self.best_score is None or percentage > self.best_score:
+            self.best_score = percentage
+            print("새로운 최고 점수입니다!")
+
     def run(self):
         while True:
-            self.show_menu()
-            choice = input("선택: ").strip()
+            try:
+                self.show_menu()
+                choice = input("선택: ").strip()
 
-            if choice == "1":
-                print("퀴즈 풀기 기능을 준비 중입니다.")
-            elif choice == "2":
-                print("퀴즈 추가 기능을 준비 중입니다.")
-            elif choice == "3":
-                print("퀴즈 목록 기능을 준비 중입니다.")
-            elif choice == "4":
-                print("점수 확인 기능을 준비 중입니다.")
-            elif choice == "5":
-                print("프로그램을 종료합니다.")
+                if choice == "":
+                    print("빈 입력은 사용할 수 없습니다.")
+
+                elif choice == "1":
+                    self.play_quiz()
+
+                elif choice == "2":
+                    print("퀴즈 추가 기능을 준비 중입니다.")
+
+                elif choice == "3":
+                    print("퀴즈 목록 기능을 준비 중입니다.")
+
+                elif choice == "4":
+                    print("점수 확인 기능을 준비 중입니다.")
+
+                elif choice == "5":
+                    print("프로그램을 종료합니다.")
+                    break
+
+                else:
+                    print("잘못된 입력입니다. 1~5 사이의 숫자를 입력하세요.")
+
+            except (KeyboardInterrupt, EOFError):
+                print("\n입력이 중단되었습니다. 프로그램을 안전하게 종료합니다.")
                 break
-            else:
-                print("잘못된 입력입니다. 1~5 사이의 숫자를 입력하세요.")
 
 
 if __name__ == "__main__":
     game = QuizGame()
     game.run()
+```
